@@ -27,7 +27,14 @@ def calculate_total_price(request):
         try:
             product = Product.objects.get(pk=product_id)
             total_price += product.price * quantity
+            discount = 0
+            if total_price > 20000:
+                discount = 15
+                total_price = total_price * (1 - discount / 100)
+            elif total_price > 10000:
+                discount = 10
+                total_price = total_price * (1 - discount / 100)
         except Product.DoesNotExist:
             return Response({'error': f'Product with id {product_id} not found'}, status=404)
 
-    return Response({'total_price': total_price})
+    return Response({'total_price': total_price, 'discount (%)': discount})
